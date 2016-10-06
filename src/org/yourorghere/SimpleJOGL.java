@@ -90,58 +90,18 @@ public class SimpleJOGL implements GLEventListener {
         // Reset the current matrix to the "identity"
         gl.glLoadIdentity();
 
-        gl.glBegin(GL.GL_TRIANGLES);
-            gl.glColor3f(1.0f, 0.0f, 0.0f);
-            gl.glVertex3f(-1.0f, 1.0f, -6.0f);
-           // gl.glColor3f(0.0f, 1.0f, 0.0f);
-            gl.glVertex3f(-2.5f,-1.0f, -6.0f);
-            //gl.glColor3f(0.0f, 0.0f, 1.0f);
-            gl.glVertex3f( 1.0f,-1.0f, -6.0f);
-        gl.glEnd();
-        // Move the "drawing cursor" around
-       /* gl.glTranslatef(-1.5f, 0.0f, -6.0f);
+        float x,y,kat;
+gl.glBegin(GL.GL_TRIANGLE_FAN);
+gl.glVertex3f(0.0f,0.0f,-6.0f); //œrodek
+for(kat = 0.0f; kat < (2.0f*Math.PI);
+kat+=(Math.PI/32.0f))
+{
+x = 1.5f*(float)Math.sin(kat);
+y = 1.5f*(float)Math.cos(kat);
+gl.glVertex3f(x, y, -6.0f); //kolejne punkty
+}
+gl.glEnd();
 
-        // Drawing Using Triangles
-        gl.glBegin(GL.GL_TRIANGLES);
-            gl.glColor3f(1.0f, 0.0f, 0.0f);    // Set the current drawing color to red
-            gl.glVertex3f(0.0f, 1.0f, 0.0f);   // Top
-            gl.glColor3f(0.0f, 1.0f, 0.0f);    // Set the current drawing color to green
-            gl.glVertex3f(-1.0f, -1.0f, 0.0f); // Bottom Left
-            gl.glColor3f(0.0f, 0.0f, 1.0f);    // Set the current drawing color to blue
-            gl.glVertex3f(1.0f, -1.0f, 0.0f);  // Bottom Right
-        // Finished Drawing The Triangle
-        gl.glEnd();
-
-        // Move the "drawing cursor" to another position
-        gl.glTranslatef(3.0f, 0.0f, 0.0f);
-        // Draw A Quad
-        gl.glBegin(GL.GL_QUADS);
-            gl.glColor3f(0.5f, 0.5f, 1.0f);    // Set the current drawing color to light blue
-            gl.glVertex3f(-1.0f, 1.0f, 0.0f);  // Top Left
-            gl.glVertex3f(1.0f, 1.0f, 0.0f);   // Top Right
-            gl.glVertex3f(1.0f, -1.0f, 0.0f);  // Bottom Right
-            gl.glVertex3f(-1.0f, -1.0f, 0.0f); // Bottom Left
-        // Done Drawing The Quad
-        gl.glEnd();
-*/
-        gl.glTranslatef( -0.8f, -1.5f, 0.0f);
-      gl.glBegin(GL.GL_QUADS);
-        gl.glColor3f(0.5f, 0.5f, 1.0f);
-        gl.glVertex3f(-1.5f, -0.5f, -6.0f);
-        gl.glVertex3f(1.5f, -0.5f, -6.0f);
-        gl.glVertex3f(1.5f, 0.5f, -6.0f);
-        gl.glVertex3f(-1.5f, 0.5f, -6.0f);
-      gl.glEnd(); 
-      
-      gl.glTranslatef( 1.0f, -1.5f, 0.0f);
-       gl.glBegin(GL.GL_QUADS);
-        gl.glColor3f(0.0f, 1.0f, 0.0f);
-        gl.glVertex3f(-1.5f, -0.5f, -6.0f);
-        gl.glVertex3f(1.5f, -0.5f, -6.0f);
-        gl.glVertex3f(1.5f, 0.5f, -6.0f);
-        gl.glVertex3f(-1.5f, 0.5f, -6.0f);
-      gl.glEnd(); 
-      
         // Flush all drawing operations to the graphics card
         gl.glFlush();
     }
