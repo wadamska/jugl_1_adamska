@@ -90,8 +90,16 @@ public class SimpleJOGL implements GLEventListener {
         // Reset the current matrix to the "identity"
         gl.glLoadIdentity();
 
+        gl.glBegin(GL.GL_TRIANGLES);
+            //gl.glColor3f(1.0f, 0.0f, 0.0f);
+            gl.glVertex3f(-1.0f, 1.0f, -6.0f);
+           // gl.glColor3f(0.0f, 1.0f, 0.0f);
+            gl.glVertex3f(-2.0f,-1.0f, -6.0f);
+            //gl.glColor3f(0.0f, 0.0f, 1.0f);
+            gl.glVertex3f( 0.0f,-1.0f, -6.0f);
+        gl.glEnd();
         // Move the "drawing cursor" around
-        gl.glTranslatef(-1.5f, 0.0f, -6.0f);
+       /* gl.glTranslatef(-1.5f, 0.0f, -6.0f);
 
         // Drawing Using Triangles
         gl.glBegin(GL.GL_TRIANGLES);
@@ -115,7 +123,7 @@ public class SimpleJOGL implements GLEventListener {
             gl.glVertex3f(-1.0f, -1.0f, 0.0f); // Bottom Left
         // Done Drawing The Quad
         gl.glEnd();
-
+*/
         // Flush all drawing operations to the graphics card
         gl.glFlush();
     }
