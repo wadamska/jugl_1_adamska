@@ -91,7 +91,7 @@ public class SimpleJOGL implements GLEventListener {
         gl.glLoadIdentity();
 
         gl.glBegin(GL.GL_TRIANGLES);
-            gl.glColor3f(1.0f, 0.0f, 0.0f);
+            //gl.glColor3f(1.0f, 0.0f, 0.0f);
             gl.glVertex3f(-1.0f, 1.0f, -6.0f);
            // gl.glColor3f(0.0f, 1.0f, 0.0f);
             gl.glVertex3f(-2.0f,-1.0f, -6.0f);
@@ -124,6 +124,15 @@ public class SimpleJOGL implements GLEventListener {
         // Done Drawing The Quad
         gl.glEnd();
 */
+       
+       
+      gl.glBegin(GL.GL_QUADS);
+        gl.glVertex3f(-1.0f, 1.0f, 0.0f);  
+            gl.glVertex3f(1.0f, 1.0f, 0.0f);   
+            gl.glVertex3f(1.0f, -1.0f, 0.0f);  
+            gl.glVertex3f(-1.0f, -1.0f, 0.0f);
+      gl.glEnd(); 
+      
         // Flush all drawing operations to the graphics card
         gl.glFlush();
     }
