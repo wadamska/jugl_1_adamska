@@ -94,9 +94,9 @@ public class SimpleJOGL implements GLEventListener {
             gl.glColor3f(1.0f, 0.0f, 0.0f);
             gl.glVertex3f(-1.0f, 1.0f, -6.0f);
            // gl.glColor3f(0.0f, 1.0f, 0.0f);
-            gl.glVertex3f(-2.0f,-1.0f, -6.0f);
+            gl.glVertex3f(-2.5f,-1.0f, -6.0f);
             //gl.glColor3f(0.0f, 0.0f, 1.0f);
-            gl.glVertex3f( 0.0f,-1.0f, -6.0f);
+            gl.glVertex3f( 1.0f,-1.0f, -6.0f);
         gl.glEnd();
         // Move the "drawing cursor" around
        /* gl.glTranslatef(-1.5f, 0.0f, -6.0f);
@@ -124,13 +124,22 @@ public class SimpleJOGL implements GLEventListener {
         // Done Drawing The Quad
         gl.glEnd();
 */
-        gl.glTranslatef(2.0f, 0.0f, 0.0f);
+        gl.glTranslatef( -0.8f, -1.5f, 0.0f);
       gl.glBegin(GL.GL_QUADS);
         gl.glColor3f(0.5f, 0.5f, 1.0f);
-        gl.glVertex3f(-1.0f, -2.0f, -6.0f);
-        gl.glVertex3f(1.0f, -2.0f, -6.0f);
-        gl.glVertex3f(1.0f, 2.0f, -6.0f);
-        gl.glVertex3f(-1.0f, 2.0f, -6.0f);
+        gl.glVertex3f(-1.5f, -0.5f, -6.0f);
+        gl.glVertex3f(1.5f, -0.5f, -6.0f);
+        gl.glVertex3f(1.5f, 0.5f, -6.0f);
+        gl.glVertex3f(-1.5f, 0.5f, -6.0f);
+      gl.glEnd(); 
+      
+      gl.glTranslatef( 1.0f, -1.5f, 0.0f);
+       gl.glBegin(GL.GL_QUADS);
+        gl.glColor3f(0.0f, 1.0f, 0.0f);
+        gl.glVertex3f(-1.5f, -0.5f, -6.0f);
+        gl.glVertex3f(1.5f, -0.5f, -6.0f);
+        gl.glVertex3f(1.5f, 0.5f, -6.0f);
+        gl.glVertex3f(-1.5f, 0.5f, -6.0f);
       gl.glEnd(); 
       
         // Flush all drawing operations to the graphics card
