@@ -82,9 +82,9 @@ public class SimpleJOGL implements GLEventListener {
   if (e.getKeyChar() == 's')
   specular = new float [] {specular[0]+0.1f, specular[0]+0.1f, specular[0]+0.1f, specular[0]+0.1f,1};
   if (e.getKeyChar() == 'd')
-  lightPos[3]=0;
+  lightPos = new float [] {lightPos[0]-0.1f, lightPos[0]-0.1f, lightPos[0]-0.1f, lightPos[0]-0.1f,1};
   if (e.getKeyChar() == 'f')
-  lightPos[3]=0;
+  lightPos = new float [] {lightPos[0]+0.1f, lightPos[0]+0.1f, lightPos[0]+0.1f, lightPos[0]+0.1f,1};
   }
    
   public void keyReleased(KeyEvent e){}
