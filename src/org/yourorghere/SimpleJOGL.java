@@ -21,7 +21,14 @@ import javax.media.opengl.glu.GLU;
  * This version is equal to Brian Paul's version 1.2 1999/10/21
  */
 public class SimpleJOGL implements GLEventListener {
-private static float xrot = 0.0f, yrot = 0.0f;
+
+    private static float xrot = 0.0f, yrot = 0.0f;
+    
+    static float ambientLight[] = { 0.3f, 0.3f, 0.3f, 1.0f };//swiat³o otaczajšce
+    static float diffuseLight[] = { 0.7f, 0.7f, 0.7f, 1.0f };//?wiat³o rozproszone
+    static float specular[] = { 1.0f, 1.0f, 1.0f, 1.0f}; //?wiat³o odbite
+    static float lightPos[] = { 0.0f, 150.0f, 150.0f, 1.0f };//pozycja ?wiat³a
+    
     public static void main(String[] args) {
         Frame frame = new Frame("Simple JOGL Application");
         GLCanvas canvas = new GLCanvas();
@@ -60,7 +67,26 @@ private static float xrot = 0.0f, yrot = 0.0f;
   yrot += 1.0f;
   if(e.getKeyCode() == KeyEvent.VK_LEFT)
   yrot -=1.0f;
+  
+    
+  if (e.getKeyChar() == 'q')
+  ambientLight = new float [] {ambientLight[0]-0.1f, ambientLight[0]-0.1f, ambientLight[0]-0.1f, ambientLight[0]-0.1f,1};
+  if (e.getKeyChar() == 'w')
+  ambientLight = new float [] {ambientLight[0]+0.1f, ambientLight[0]+0.1f, ambientLight[0]+0.1f, ambientLight[0]+0.1f,1};
+  if (e.getKeyChar() == 'e')
+  diffuseLight = new float [] {diffuseLight[0]-0.1f, diffuseLight[0]-0.1f, diffuseLight[0]-0.1f, diffuseLight[0]-0.1f,1};
+  if (e.getKeyChar() == 'r')
+  diffuseLight = new float [] {diffuseLight[0]+0.1f, diffuseLight[0]+0.1f, diffuseLight[0]+0.1f, diffuseLight[0]+0.1f,1};
+  if (e.getKeyChar() == 'a')
+  specular = new float [] {specular[0]-0.1f, specular[0]-0.1f, specular[0]-0.1f, specular[0]-0.1f,1};
+  if (e.getKeyChar() == 's')
+  specular = new float [] {specular[0]+0.1f, specular[0]+0.1f, specular[0]+0.1f, specular[0]+0.1f,1};
+  if (e.getKeyChar() == 'd')
+  lightPos[3]=0;
+  if (e.getKeyChar() == 'f')
+  lightPos[3]=0;
   }
+   
   public void keyReleased(KeyEvent e){}
   public void keyTyped(KeyEvent e){}
   });
@@ -80,9 +106,30 @@ private static float xrot = 0.0f, yrot = 0.0f;
 
         // Enable VSync
         gl.setSwapInterval(1);
+        
+        //(czwarty parametr okre?la odleg³o?æ ?ród³a:
+        //0.0f-nieskoñczona; 1.0f-okre?lona przez pozosta³e parametry)
+        gl.glEnable(GL.GL_LIGHTING); //uaktywnienie o?wietlenia
+        //ustawienie parametrów ?ród³a ?wiat³a nr. 0
+        gl.glLightfv(GL.GL_LIGHT0,GL.GL_AMBIENT,ambientLight,0); //swiat³o otaczajšce
+        gl.glLightfv(GL.GL_LIGHT0,GL.GL_DIFFUSE,diffuseLight,0); //?wiat³o rozproszone
+        gl.glLightfv(GL.GL_LIGHT0,GL.GL_SPECULAR,specular,0); //?wiat³o odbite
+        gl.glLightfv(GL.GL_LIGHT0,GL.GL_POSITION,lightPos,0); //pozycja ?wiat³a
+       
+        gl.glEnable(GL.GL_LIGHT0); //uaktywnienie ?ród³a ?wiat³a nr. 0
+        gl.glEnable(GL.GL_COLOR_MATERIAL); //uaktywnienie ?ledzenia kolorów
+        //kolory bêdš ustalane za pomocš glColor
+        gl.glColorMaterial(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE);
+        //Ustawienie jasno?ci i odblaskowo?ci obiektów
+        float specref[] = { 1.0f, 1.0f, 1.0f, 1.0f }; //parametry odblaskowo?ci
+        gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR,specref,0);
+        
+        gl.glMateriali(GL.GL_FRONT,GL.GL_SHININESS,128);
+
+        gl.glEnable(GL.GL_DEPTH_TEST);
 
         // Setup the drawing area and shading mode
-        gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         gl.glShadeModel(GL.GL_SMOOTH); // try setting this to GL_FLAT and see what happens.
         gl.glEnable(GL.GL_CULL_FACE);
     }
@@ -107,6 +154,11 @@ private static float xrot = 0.0f, yrot = 0.0f;
     public void display(GLAutoDrawable drawable) {
         GL gl = drawable.getGL();
 
+        gl.glLightfv(GL.GL_LIGHT0,GL.GL_AMBIENT,ambientLight,0); //swiat³o otaczajšce
+        gl.glLightfv(GL.GL_LIGHT0,GL.GL_DIFFUSE,diffuseLight,0); //?wiat³o rozproszone
+        gl.glLightfv(GL.GL_LIGHT0,GL.GL_SPECULAR,specular,0); //?wiat³o odbite
+        gl.glLightfv(GL.GL_LIGHT0,GL.GL_POSITION,lightPos,0); //pozycja ?wiat³a
+        
         // Clear the drawing area
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
         // Reset the current matrix to the "identity"
@@ -115,6 +167,9 @@ private static float xrot = 0.0f, yrot = 0.0f;
         gl.glTranslatef(0.0f, 0.0f, -6.0f); //przesuni?cie o 6 jednostek
         gl.glRotatef(xrot, 1.0f, 0.0f, 0.0f); //rotacja wokó? osi X
         gl.glRotatef(yrot, 0.0f, 1.0f, 0.0f); //rotacja wokó? osi Y
+        
+        
+        
           // Move the "drawing cursor" around
  //gl.glTranslatef(-1.5f, 1.0f, -6.0f);
          //gl.glTranslatef(-1.5f, 1.0f, -6.0f);
@@ -133,36 +188,42 @@ gl.glEnd(); */
  gl.glBegin(GL.GL_QUADS);
  //?ciana przednia
  gl.glColor3f(1.0f,0.0f,0.0f);
+ gl.glNormal3f(0.0f, 0.0f, 1.0f);
  gl.glVertex3f(-1.0f,-1.0f,1.0f);
  gl.glVertex3f(1.0f,-1.0f,1.0f);
  gl.glVertex3f(1.0f,1.0f,1.0f);
  gl.glVertex3f(-1.0f,1.0f,1.0f);
  //sciana tylnia
  gl.glColor3f(0.0f,1.0f,0.0f);
+ gl.glNormal3f(0.0f, 0.0f, 1.0f);
  gl.glVertex3f(-1.0f,1.0f,-1.0f);
  gl.glVertex3f(1.0f,1.0f,-1.0f);
  gl.glVertex3f(1.0f,-1.0f,-1.0f);
  gl.glVertex3f(-1.0f,-1.0f,-1.0f);
  //?ciana lewa
  gl.glColor3f(0.0f,0.0f,1.0f);
+ gl.glNormal3f(0.0f, 0.0f, 1.0f);
  gl.glVertex3f(-1.0f,-1.0f,-1.0f);
  gl.glVertex3f(-1.0f,-1.0f,1.0f);
  gl.glVertex3f(-1.0f,1.0f,1.0f);
  gl.glVertex3f(-1.0f,1.0f,-1.0f);
  //?ciana prawa
  gl.glColor3f(1.0f,1.0f,0.0f);
+ gl.glNormal3f(0.0f, 0.0f, 1.0f);
  gl.glVertex3f(1.0f,1.0f,-1.0f);
  gl.glVertex3f(1.0f,1.0f,1.0f);
  gl.glVertex3f(1.0f,-1.0f,1.0f);
  gl.glVertex3f(1.0f,-1.0f,-1.0f);
  //?ciana dolna
  gl.glColor3f(1.0f,0.0f,1.0f);
+ gl.glNormal3f(0.0f, 0.0f, 1.0f);
  gl.glVertex3f(-1.0f,-1.0f,1.0f);
  gl.glVertex3f(-1.0f,-1.0f,-1.0f);
  gl.glVertex3f(1.0f,-1.0f,-1.0f);
  gl.glVertex3f(1.0f,-1.0f,1.0f);
  //?ciana górna
  gl.glColor3f(1.0f,2.0f,1.0f);
+ gl.glNormal3f(0.0f, 0.0f, 1.0f);
  gl.glVertex3f(1.0f,1.0f,-1.0f);
  gl.glVertex3f(-1.0f,1.0f,-1.0f);
  gl.glVertex3f(-1.0f,1.0f,1.0f);
