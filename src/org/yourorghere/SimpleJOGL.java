@@ -29,7 +29,7 @@ import javax.swing.JOptionPane;
 public class SimpleJOGL implements GLEventListener {
 static BufferedImage image1 = null,image2 = null, image3 = null;
 static Texture t1 = null, t2 = null , t3 = null;
-static Scena scena;
+
 private static float xrot = 0.0f, yrot = 0.0f;
  
  
@@ -99,9 +99,9 @@ private static float xrot = 0.0f, yrot = 0.0f;
     
          try
  {
- image1 = ImageIO.read(getClass().getResourceAsStream("/niebo.jpg"));
- image2 = ImageIO.read(getClass().getResourceAsStream("/bok.jpg"));
- image3 = ImageIO.read(getClass().getResourceAsStream("/trawa.jpg"));
+ image1 = ImageIO.read(getClass().getResourceAsStream("/bok.jpg"));
+ image2 = ImageIO.read(getClass().getResourceAsStream("/trawa.jpg"));
+ image3 = ImageIO.read(getClass().getResourceAsStream("/niebo.jpg"));
  }
  catch(Exception exc)
  {
@@ -134,7 +134,7 @@ private static float xrot = 0.0f, yrot = 0.0f;
         gl.glViewport(0, 0, width, height);
         gl.glMatrixMode(GL.GL_PROJECTION);
         gl.glLoadIdentity();
-        glu.gluPerspective(300.0f, h, 1.0, 20.0);
+        glu.gluPerspective(90.0f, h, 1.0, 300.0);
         gl.glMatrixMode(GL.GL_MODELVIEW);
         gl.glLoadIdentity();
     }
@@ -148,27 +148,27 @@ gl.glBindTexture(GL.GL_TEXTURE_2D, t1.getTextureObject());
 gl.glBegin(GL.GL_QUADS);
 //œciana przednia
 gl.glNormal3f(0.0f,0.0f,-1.0f);
-gl.glTexCoord2f(1.0f, 0.0f);gl.glVertex3f(-100.0f,100.0f,100.0f);
+gl.glTexCoord2f(0.7f, 0.0f);gl.glVertex3f(-100.0f,100.0f,100.0f);
 gl.glTexCoord2f(0.0f, 0.0f);gl.glVertex3f(100.0f,100.0f,100.0f);
-gl.glTexCoord2f(0.0f, 1.0f);gl.glVertex3f(100.0f,-100.0f,100.0f);
-gl.glTexCoord2f(1.0f, 1.0f);gl.glVertex3f(-100.0f,-100.0f,100.0f);
+gl.glTexCoord2f(0.0f, 0.7f);gl.glVertex3f(100.0f,-100.0f,100.0f);
+gl.glTexCoord2f(0.7f, 0.7f);gl.glVertex3f(-100.0f,-100.0f,100.0f);
 //œciana tylnia
 gl.glNormal3f(0.0f,0.0f,1.0f);
-gl.glTexCoord2f(1.0f, 1.0f);gl.glVertex3f(-100.0f,-100.0f,-100.0f);
-gl.glTexCoord2f(0.0f, 1.0f);gl.glVertex3f(100.0f,-100.0f,-100.0f);
+gl.glTexCoord2f(0.7f, 0.7f);gl.glVertex3f(-100.0f,-100.0f,-100.0f);
+gl.glTexCoord2f(0.0f, 0.7f);gl.glVertex3f(100.0f,-100.0f,-100.0f);
 gl.glTexCoord2f(0.0f, 0.0f);gl.glVertex3f(100.0f,100.0f,-100.0f);
-gl.glTexCoord2f(1.0f, 0.0f);gl.glVertex3f(-100.0f,100.0f,-100.0f);
+gl.glTexCoord2f(0.7f, 0.0f);gl.glVertex3f(-100.0f,100.0f,-100.0f);
 //œciana lewa
 gl.glNormal3f(1.0f,0.0f,0.0f);
 gl.glTexCoord2f(0.0f, 0.0f);gl.glVertex3f(-100.0f,100.0f,-100.0f);
-gl.glTexCoord2f(1.0f, 0.0f);gl.glVertex3f(-100.0f,100.0f,100.0f);
-gl.glTexCoord2f(1.0f, 1.0f);gl.glVertex3f(-100.0f,-100.0f,100.0f);
-gl.glTexCoord2f(0.0f, 1.0f);gl.glVertex3f(-100.0f,-100.0f,-100.0f);
+gl.glTexCoord2f(0.7f, 0.0f);gl.glVertex3f(-100.0f,100.0f,100.0f);
+gl.glTexCoord2f(0.7f, 0.7f);gl.glVertex3f(-100.0f,-100.0f,100.0f);
+gl.glTexCoord2f(0.0f, 0.7f);gl.glVertex3f(-100.0f,-100.0f,-100.0f);
 //œciana prawa
 gl.glNormal3f(-1.0f,0.0f,0.0f);
-gl.glTexCoord2f(0.0f, 1.0f);gl.glVertex3f(100.0f,-100.0f,-100.0f);
-gl.glTexCoord2f(1.0f, 1.0f);gl.glVertex3f(100.0f,-100.0f,100.0f);
-gl.glTexCoord2f(1.0f, 0.0f);gl.glVertex3f(100.0f,100.0f,100.0f);
+gl.glTexCoord2f(0.0f, 0.7f);gl.glVertex3f(100.0f,-100.0f,-100.0f);
+gl.glTexCoord2f(0.7f, 0.7f);gl.glVertex3f(100.0f,-100.0f,100.0f);
+gl.glTexCoord2f(0.7f, 0.0f);gl.glVertex3f(100.0f,100.0f,100.0f);
 gl.glTexCoord2f(0.0f, 0.0f);gl.glVertex3f(100.0f,100.0f,-100.0f);
 gl.glEnd();
 
