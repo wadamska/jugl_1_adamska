@@ -80,6 +80,7 @@ static float x = 0.f, z = 0.0f;
   if(e.getKeyCode() == KeyEvent.VK_SPACE)
       przesun(1.0f);
   
+  
   if (e.getKeyChar() == 'q')
   ambientLight = new float [] {ambientLight[0]-0.1f, ambientLight[0]-0.1f, ambientLight[0]-0.1f, ambientLight[0]-0.1f,1};
   if (e.getKeyChar() == 'w')
@@ -264,8 +265,12 @@ gl.glEnd();
  }
  
      public static void przesun(float d){
-         x-=d*Math.sin(yrot*(3.14f/180.0f));
-         z+=d*Math.cos(yrot*(3.14f/180.0f));
+         if (x < 100 )
+         {
+          x-=d*Math.sin(yrot*(3.14f/180.0f));
+          z+=d*Math.cos(yrot*(3.14f/180.0f));
+         }
+         
          
          }
      
@@ -305,7 +310,8 @@ gl.glVertex3f(x, y, -6.0f); //kolejne punkty
 gl.glEnd(); */
  gl.glTranslatef(0.0f, 97.0f, 0.0f);
  Rysuj(gl,t1,t2,t3);
- gl.glTranslatef(0.0f, -98.0f, 0.0f);
+ gl.glTranslatef(0.0f, -97.0f, 0.0f);
+ gl.glScalef(2.0f,2.0f,2.0f);
  koparka.Rysuj(gl);
 /* gl.glBegin(GL.GL_QUADS);
  //?ciana przednia
