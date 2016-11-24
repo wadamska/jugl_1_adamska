@@ -29,9 +29,12 @@ import javax.swing.JOptionPane;
 public class SimpleJOGL implements GLEventListener {
 static BufferedImage image1 = null,image2 = null, image3 = null;
 static Texture t1 = null, t2 = null , t3 = null;
-
+static Koparka koparka;
 private static float xrot = 0.0f, yrot = 0.0f;
-
+static float ambientLight[] = { 0.3f, 0.3f, 0.3f, 1.0f };//swiat?o otaczajšce
+static float diffuseLight[] = { 0.7f, 0.7f, 0.7f, 1.0f };//?wiat?o rozproszone
+static float specular[] = { 1.0f, 1.0f, 1.0f, 1.0f}; //?wiat?o odbite
+static float lightPos[] = { 0.0f, 150.0f, 150.0f, 1.0f };//pozycja ?wiat?a
 static float x = 0.f, z = 0.0f;
  
     public static void main(String[] args) {
@@ -77,6 +80,40 @@ static float x = 0.f, z = 0.0f;
   if(e.getKeyCode() == KeyEvent.VK_SPACE)
       przesun(1.0f);
   
+  if (e.getKeyChar() == 'q')
+  ambientLight = new float [] {ambientLight[0]-0.1f, ambientLight[0]-0.1f, ambientLight[0]-0.1f, ambientLight[0]-0.1f,1};
+  if (e.getKeyChar() == 'w')
+  ambientLight = new float [] {ambientLight[0]+0.1f, ambientLight[0]+0.1f, ambientLight[0]+0.1f, ambientLight[0]+0.1f,1};
+  if (e.getKeyChar() == 'e')
+  diffuseLight = new float [] {diffuseLight[0]-0.1f, diffuseLight[0]-0.1f, diffuseLight[0]-0.1f, diffuseLight[0]-0.1f,1};
+  if (e.getKeyChar() == 'r')
+  diffuseLight = new float [] {diffuseLight[0]+0.1f, diffuseLight[0]+0.1f, diffuseLight[0]+0.1f, diffuseLight[0]+0.1f,1};
+  if (e.getKeyChar() == 'a')
+  specular = new float [] {specular[0]-0.1f, specular[0]-0.1f, specular[0]-0.1f, specular[0]-0.1f,1};
+  if (e.getKeyChar() == 's')
+  specular = new float [] {specular[0]+0.1f, specular[0]+0.1f, specular[0]+0.1f, specular[0]+0.1f,1};
+  if (e.getKeyChar() == 'd')
+  lightPos = new float [] {lightPos[0]-0.1f, lightPos[0]-0.1f, lightPos[0]-0.1f, lightPos[0]-0.1f,1};
+  if (e.getKeyChar() == 'f')
+  lightPos = new float [] {lightPos[0]+0.1f, lightPos[0]+0.1f, lightPos[0]+0.1f, lightPos[0]+0.1f,1};
+  
+  if(e.getKeyChar() == '1') 
+      koparka.kat1 -= 1.0f;
+  if(e.getKeyChar() == '2') 
+      koparka.kat1 += 1.0f;
+  if(e.getKeyChar() == '3') 
+      koparka.kat2 += 1.0f;
+  if(e.getKeyChar() == '4') 
+      koparka.kat2 -= 1.0f;
+  if(e.getKeyChar() == '5') 
+      koparka.kat3 -= 1.0f;
+  if(e.getKeyChar() == '6') 
+      koparka.kat3 += 1.0f;
+  if(e.getKeyChar() == '7') 
+      koparka.kat4 += 1.0f;
+  if(e.getKeyChar() == '8') 
+      koparka.kat4 -= 1.0f;
+  
   }
   public void keyReleased(KeyEvent e){}
   public void keyTyped(KeyEvent e){}
@@ -94,10 +131,30 @@ static float x = 0.f, z = 0.0f;
  
         GL gl = drawable.getGL();
         System.err.println("INIT GL IS: " + gl.getClass().getName());
- 
+        
+        koparka = new Koparka();
         // Enable VSync
         gl.setSwapInterval(1);
  
+       gl.glEnable(GL.GL_LIGHTING); //uaktywnienie o?wietlenia
+        //ustawienie parametrów ?ród?a ?wiat?a nr. 0
+        gl.glLightfv(GL.GL_LIGHT0,GL.GL_AMBIENT,ambientLight,0); //swiat?o otaczajšce
+        gl.glLightfv(GL.GL_LIGHT0,GL.GL_DIFFUSE,diffuseLight,0); //?wiat?o rozproszone
+        gl.glLightfv(GL.GL_LIGHT0,GL.GL_SPECULAR,specular,0); //?wiat?o odbite
+        gl.glLightfv(GL.GL_LIGHT0,GL.GL_POSITION,lightPos,0); //pozycja ?wiat?a
+       
+        gl.glEnable(GL.GL_LIGHT0); //uaktywnienie ?ród?a ?wiat?a nr. 0
+        gl.glEnable(GL.GL_COLOR_MATERIAL); //uaktywnienie ?ledzenia kolorów
+        //kolory b?dš ustalane za pomocš glColor
+        gl.glColorMaterial(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE);
+        //Ustawienie jasno?ci i odblaskowo?ci obiektów
+        float specref[] = { 1.0f, 1.0f, 1.0f, 1.0f }; //parametry odblaskowo?ci
+        gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR,specref,0);
+        
+        gl.glMateriali(GL.GL_FRONT,GL.GL_SHININESS,128);
+
+        gl.glEnable(GL.GL_DEPTH_TEST);
+        
         // Setup the drawing area and shading mode
         gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         gl.glShadeModel(GL.GL_SMOOTH); // try setting this to GL_FLAT and see what happens.
@@ -209,11 +266,17 @@ gl.glEnd();
      public static void przesun(float d){
          x-=d*Math.sin(yrot*(3.14f/180.0f));
          z+=d*Math.cos(yrot*(3.14f/180.0f));
-     }
+         
+         }
      
     public void display(GLAutoDrawable drawable) {
         GL gl = drawable.getGL();
  
+        gl.glLightfv(GL.GL_LIGHT0,GL.GL_AMBIENT,ambientLight,0); //swiat?o otaczajšce
+        gl.glLightfv(GL.GL_LIGHT0,GL.GL_DIFFUSE,diffuseLight,0); //?wiat?o rozproszone
+        gl.glLightfv(GL.GL_LIGHT0,GL.GL_SPECULAR,specular,0); //?wiat?o odbite
+        gl.glLightfv(GL.GL_LIGHT0,GL.GL_POSITION,lightPos,0); //pozycja ?wiat?a
+                
         // Clear the drawing area
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
         // Reset the current matrix to the "identity"
@@ -240,9 +303,10 @@ y = 2.5f*(float)Math.cos(kat); //
 gl.glVertex3f(x, y, -6.0f); //kolejne punkty
 }
 gl.glEnd(); */
- gl.glTranslatef(0.0f, 98.0f, 0.0f);
+ gl.glTranslatef(0.0f, 97.0f, 0.0f);
  Rysuj(gl,t1,t2,t3);
- 
+ gl.glTranslatef(0.0f, -98.0f, 0.0f);
+ koparka.Rysuj(gl);
 /* gl.glBegin(GL.GL_QUADS);
  //?ciana przednia
  gl.glNormal3f(0.0f, 0.0f, 1.0f);
