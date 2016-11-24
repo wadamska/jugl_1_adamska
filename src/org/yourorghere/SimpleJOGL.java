@@ -1,5 +1,5 @@
 package org.yourorghere;
-
+ 
 import com.sun.opengl.util.Animator;
 import java.awt.Frame;
 import java.awt.event.KeyEvent;
@@ -11,9 +11,15 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCanvas;
 import javax.media.opengl.GLEventListener;
 import javax.media.opengl.glu.GLU;
-
-
-
+import com.sun.opengl.util.texture.Texture;
+import com.sun.opengl.util.texture.TextureIO;
+import java.io.File;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
+ 
+ 
+ 
 /**
  * SimpleJOGL.java <BR>
  * author: Brian Paul (converted to Java by Ron Cemer and Sven Goethel) <P>
@@ -21,31 +27,28 @@ import javax.media.opengl.glu.GLU;
  * This version is equal to Brian Paul's version 1.2 1999/10/21
  */
 public class SimpleJOGL implements GLEventListener {
-    static Koparka koparka;
-    private static float xrot = 0.0f, yrot = 0.0f;
-    
-    static float ambientLight[] = { 0.3f, 0.3f, 0.3f, 1.0f };//swiat³o otaczajšce
-    static float diffuseLight[] = { 0.7f, 0.7f, 0.7f, 1.0f };//?wiat³o rozproszone
-    static float specular[] = { 1.0f, 1.0f, 1.0f, 1.0f}; //?wiat³o odbite
-    static float lightPos[] = { 0.0f, 150.0f, 150.0f, 1.0f };//pozycja ?wiat³a
-    
+static BufferedImage image1 = null,image2 = null;
+static Texture t1 = null, t2 = null;
+private static float xrot = 0.0f, yrot = 0.0f;
+ 
+ 
     public static void main(String[] args) {
         Frame frame = new Frame("Simple JOGL Application");
         GLCanvas canvas = new GLCanvas();
-
+ 
         canvas.addGLEventListener(new SimpleJOGL());
         frame.add(canvas);
         frame.setSize(640, 480);
         final Animator animator = new Animator(canvas);
         frame.addWindowListener(new WindowAdapter() {
-
+ 
             @Override
             public void windowClosing(WindowEvent e) {
                 // Run this on another thread than the AWT event queue to
                 // make sure the call to Animator.stop() completes before
                 // exiting
                 new Thread(new Runnable() {
-
+ 
                     public void run() {
                         animator.stop();
                         System.exit(0);
@@ -67,95 +70,59 @@ public class SimpleJOGL implements GLEventListener {
   yrot += 1.0f;
   if(e.getKeyCode() == KeyEvent.VK_LEFT)
   yrot -=1.0f;
-  
-    
-  if (e.getKeyChar() == 'q')
-  ambientLight = new float [] {ambientLight[0]-0.1f, ambientLight[0]-0.1f, ambientLight[0]-0.1f, ambientLight[0]-0.1f,1};
-  if (e.getKeyChar() == 'w')
-  ambientLight = new float [] {ambientLight[0]+0.1f, ambientLight[0]+0.1f, ambientLight[0]+0.1f, ambientLight[0]+0.1f,1};
-  if (e.getKeyChar() == 'e')
-  diffuseLight = new float [] {diffuseLight[0]-0.1f, diffuseLight[0]-0.1f, diffuseLight[0]-0.1f, diffuseLight[0]-0.1f,1};
-  if (e.getKeyChar() == 'r')
-  diffuseLight = new float [] {diffuseLight[0]+0.1f, diffuseLight[0]+0.1f, diffuseLight[0]+0.1f, diffuseLight[0]+0.1f,1};
-  if (e.getKeyChar() == 'a')
-  specular = new float [] {specular[0]-0.1f, specular[0]-0.1f, specular[0]-0.1f, specular[0]-0.1f,1};
-  if (e.getKeyChar() == 's')
-  specular = new float [] {specular[0]+0.1f, specular[0]+0.1f, specular[0]+0.1f, specular[0]+0.1f,1};
-  if (e.getKeyChar() == 'd')
-  lightPos = new float [] {lightPos[0]-0.1f, lightPos[0]-0.1f, lightPos[0]-0.1f, lightPos[0]-0.1f,1};
-  if (e.getKeyChar() == 'f')
-  lightPos = new float [] {lightPos[0]+0.1f, lightPos[0]+0.1f, lightPos[0]+0.1f, lightPos[0]+0.1f,1};
-  
-  if(e.getKeyChar() == '1') 
-      koparka.kat1 -= 1.0f;
-  if(e.getKeyChar() == '2') 
-      koparka.kat1 += 1.0f;
-  if(e.getKeyChar() == '3') 
-      koparka.kat2 += 1.0f;
-  if(e.getKeyChar() == '4') 
-      koparka.kat2 -= 1.0f;
-  if(e.getKeyChar() == '5') 
-      koparka.kat3 -= 1.0f;
-  if(e.getKeyChar() == '6') 
-      koparka.kat3 += 1.0f;
-  if(e.getKeyChar() == '7') 
-      koparka.kat4 += 1.0f;
-  if(e.getKeyChar() == '8') 
-      koparka.kat4 -= 1.0f;
   }
-   
   public void keyReleased(KeyEvent e){}
   public void keyTyped(KeyEvent e){}
   });
-
+ 
         // Center frame
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         animator.start();
     }
-
+ 
     public void init(GLAutoDrawable drawable) {
         // Use debug pipeline
         // drawable.setGL(new DebugGL(drawable.getGL()));
-        
+ 
         GL gl = drawable.getGL();
         System.err.println("INIT GL IS: " + gl.getClass().getName());
-        
-        koparka = new Koparka();
+ 
         // Enable VSync
         gl.setSwapInterval(1);
-        
-        //(czwarty parametr okre?la odleg³o?æ ?ród³a:
-        //0.0f-nieskoñczona; 1.0f-okre?lona przez pozosta³e parametry)
-        gl.glEnable(GL.GL_LIGHTING); //uaktywnienie o?wietlenia
-        //ustawienie parametrów ?ród³a ?wiat³a nr. 0
-        gl.glLightfv(GL.GL_LIGHT0,GL.GL_AMBIENT,ambientLight,0); //swiat³o otaczajšce
-        gl.glLightfv(GL.GL_LIGHT0,GL.GL_DIFFUSE,diffuseLight,0); //?wiat³o rozproszone
-        gl.glLightfv(GL.GL_LIGHT0,GL.GL_SPECULAR,specular,0); //?wiat³o odbite
-        gl.glLightfv(GL.GL_LIGHT0,GL.GL_POSITION,lightPos,0); //pozycja ?wiat³a
-       
-        gl.glEnable(GL.GL_LIGHT0); //uaktywnienie ?ród³a ?wiat³a nr. 0
-        gl.glEnable(GL.GL_COLOR_MATERIAL); //uaktywnienie ?ledzenia kolorów
-        //kolory bêdš ustalane za pomocš glColor
-        gl.glColorMaterial(GL.GL_FRONT, GL.GL_AMBIENT_AND_DIFFUSE);
-        //Ustawienie jasno?ci i odblaskowo?ci obiektów
-        float specref[] = { 1.0f, 1.0f, 1.0f, 1.0f }; //parametry odblaskowo?ci
-        gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR,specref,0);
-        
-        gl.glMateriali(GL.GL_FRONT,GL.GL_SHININESS,128);
-
-        gl.glEnable(GL.GL_DEPTH_TEST);
-
+ 
         // Setup the drawing area and shading mode
-        gl.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         gl.glShadeModel(GL.GL_SMOOTH); // try setting this to GL_FLAT and see what happens.
         gl.glEnable(GL.GL_CULL_FACE);
-    }
-
+    
+         try
+ {
+ image1 = ImageIO.read(getClass().getResourceAsStream("/skora1.jpg"));
+ image2 = ImageIO.read(getClass().getResourceAsStream("/skora2.jpg"));
+ }
+ catch(Exception exc)
+ {
+ JOptionPane.showMessageDialog(null, exc.toString());
+ return;
+ }
+ 
+ t1 = TextureIO.newTexture(image1, false);
+ t2 = TextureIO.newTexture(image2, false);
+ 
+ gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_BLEND | GL.GL_MODULATE);
+ gl.glEnable(GL.GL_TEXTURE_2D);
+ gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
+ gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
+ gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+ gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+}
+    
+ 
     public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
         GL gl = drawable.getGL();
         GLU glu = new GLU();
-
+ 
         if (height <= 0) { // avoid a divide by zero error!
         
             height = 1;
@@ -164,41 +131,30 @@ public class SimpleJOGL implements GLEventListener {
         gl.glViewport(0, 0, width, height);
         gl.glMatrixMode(GL.GL_PROJECTION);
         gl.glLoadIdentity();
-        glu.gluPerspective(100.0f, h, 0.1f, 100.0f);
+        glu.gluPerspective(45.0f, h, 1.0, 20.0);
         gl.glMatrixMode(GL.GL_MODELVIEW);
         gl.glLoadIdentity();
     }
-
  
-    
     public void display(GLAutoDrawable drawable) {
         GL gl = drawable.getGL();
-        
-        
-        
-        gl.glLightfv(GL.GL_LIGHT0,GL.GL_AMBIENT,ambientLight,0); //swiat³o otaczajšce
-        gl.glLightfv(GL.GL_LIGHT0,GL.GL_DIFFUSE,diffuseLight,0); //?wiat³o rozproszone
-        gl.glLightfv(GL.GL_LIGHT0,GL.GL_SPECULAR,specular,0); //?wiat³o odbite
-        gl.glLightfv(GL.GL_LIGHT0,GL.GL_POSITION,lightPos,0); //pozycja ?wiat³a
-        
+ 
         // Clear the drawing area
         gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
         // Reset the current matrix to the "identity"
         gl.glLoadIdentity();
-
+ 
         gl.glTranslatef(0.0f, 0.0f, -6.0f); //przesuni?cie o 6 jednostek
         gl.glRotatef(xrot, 1.0f, 0.0f, 0.0f); //rotacja wokó? osi X
         gl.glRotatef(yrot, 0.0f, 1.0f, 0.0f); //rotacja wokó? osi Y
         
-        koparka.Rysuj(gl);
-        
-        
+        gl.glBindTexture(GL.GL_TEXTURE_2D, t2.getTextureObject());
           // Move the "drawing cursor" around
  //gl.glTranslatef(-1.5f, 1.0f, -6.0f);
          //gl.glTranslatef(-1.5f, 1.0f, -6.0f);
         /*float x,y,kat;
 gl.glBegin(GL.GL_TRIANGLE_FAN);
-gl.glVertex3f(0.0f,0.0f,-6.0f); //œrodek
+gl.glVertex3f(0.0f,0.0f,-6.0f); //?rodek
 for(kat = 0.0f; kat < (2.0f*Math.PI);
 kat+=(Math.PI/32.0f))
 {
@@ -207,113 +163,55 @@ y = 2.5f*(float)Math.cos(kat); //
 gl.glVertex3f(x, y, -6.0f); //kolejne punkty
 }
 gl.glEnd(); */
-/*
+ 
  gl.glBegin(GL.GL_QUADS);
  //?ciana przednia
- gl.glColor3f(1.0f,0.0f,0.0f);
  gl.glNormal3f(0.0f, 0.0f, 1.0f);
- gl.glVertex3f(-1.0f,-1.0f,1.0f);
- gl.glVertex3f(1.0f,-1.0f,1.0f);
- gl.glVertex3f(1.0f,1.0f,1.0f);
- gl.glVertex3f(-1.0f,1.0f,1.0f);
+ 
+ gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(-1.0f,-1.0f,1.0f);
+ gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(1.0f,-1.0f,1.0f);
+ gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(1.0f,1.0f,1.0f);
+ gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(-1.0f,1.0f,1.0f);
  //sciana tylnia
- gl.glColor3f(0.0f,1.0f,0.0f);
- gl.glNormal3f(0.0f, 0.0f, -1.0f);
- gl.glVertex3f(-1.0f,1.0f,-1.0f);
- gl.glVertex3f(1.0f,1.0f,-1.0f);
- gl.glVertex3f(1.0f,-1.0f,-1.0f);
- gl.glVertex3f(-1.0f,-1.0f,-1.0f);
- //?ciana lewa
- gl.glColor3f(0.0f,0.0f,1.0f);
- gl.glNormal3f(-1.0f, 0.0f, 0.0f);
- gl.glVertex3f(-1.0f,-1.0f,-1.0f);
- gl.glVertex3f(-1.0f,-1.0f,1.0f);
- gl.glVertex3f(-1.0f,1.0f,1.0f);
- gl.glVertex3f(-1.0f,1.0f,-1.0f);
- //?ciana prawa
- gl.glColor3f(1.0f,1.0f,0.0f);
- gl.glNormal3f(1.0f, 0.0f, 0.0f);
- gl.glVertex3f(1.0f,1.0f,-1.0f);
- gl.glVertex3f(1.0f,1.0f,1.0f);
- gl.glVertex3f(1.0f,-1.0f,1.0f);
- gl.glVertex3f(1.0f,-1.0f,-1.0f);
- //?ciana dolna
- gl.glColor3f(1.0f,0.0f,1.0f);
- gl.glNormal3f(0.0f, -1.0f, 0.0f);
- gl.glVertex3f(-1.0f,-1.0f,1.0f);
- gl.glVertex3f(-1.0f,-1.0f,-1.0f);
- gl.glVertex3f(1.0f,-1.0f,-1.0f);
- gl.glVertex3f(1.0f,-1.0f,1.0f);
- //?ciana górna
- gl.glColor3f(1.0f,2.0f,1.0f);
- gl.glNormal3f(0.0f, 1.0f, 0.0f);
- gl.glVertex3f(1.0f,1.0f,-1.0f);
- gl.glVertex3f(-1.0f,1.0f,-1.0f);
- gl.glVertex3f(-1.0f,1.0f,1.0f);
- gl.glVertex3f(1.0f,1.0f,1.0f);
- gl.glEnd(); 
-*/
-/*        
- gl.glBegin(GL.GL_TRIANGLES);
- //trojkat1
- gl.glColor3f(1.0f,0.0f,0.0f);
- gl.glVertex3f(-1.0f,-1.0f,0.0f);
- gl.glVertex3f(0.0f,0.0f, 2.0f);
- gl.glVertex3f(-1.0f,1.0f, 0.0f);
- 
- 
- //trojkat2
- gl.glColor3f(0.0f,1.0f,0.0f);
- gl.glVertex3f(-1.0f,1.0f, 0.0f);
- gl.glVertex3f(0.0f,0.0f, 2.0f);
- gl.glVertex3f(1.0f,1.0f, 0.0f);
- 
- //trojkat3
- gl.glColor3f(0.0f,0.0f,1.0f);
- gl.glVertex3f(1.0f,1.0f, 0.0f);
- gl.glVertex3f(0.0f,0.0f, 2.0f);
- gl.glVertex3f(1.0f,-1.0f, 0.0f);
-  
- //trojkat4
- gl.glColor3f(1.0f,1.0f,0.0f);
- gl.glVertex3f(1.0f,-1.0f, 0.0f);
- gl.glVertex3f(0.0f,0.0f, 2.0f);
- gl.glVertex3f(-1.0f,-1.0f, 0.0f);
- 
+ gl.glNormal3f(0.0f, 0.0f, 1.0f);
+ gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(-1.0f,1.0f,-1.0f);
+ gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(1.0f,1.0f,-1.0f);
+ gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(1.0f,-1.0f,-1.0f);
+ gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(-1.0f,-1.0f,-1.0f);
  gl.glEnd();
- 
+ gl.glBindTexture(GL.GL_TEXTURE_2D, t1.getTextureObject());
  gl.glBegin(GL.GL_QUADS);
- gl.glColor3f(1.0f,0.0f,1.0f);
- gl.glVertex3f(-1.0f,-1.0f,0.0f);
- gl.glVertex3f(-1.0f,1.0f,0.0f);
- gl.glVertex3f(1.0f,1.0f,0.0f);
- gl.glVertex3f(1.0f,-1.0f,0.0f);
- gl.glEnd();
-*/
- //gl.glBegin(GL.GL_TRIANGLES);
-//œciana przednia
-//float[] scianka1={-1.0f, -1.0f, 1.0f, //wpó³rzêdne pierwszego punktu
-// 1.0f, -1.0f, 1.0f, //wspó³rzêdne drugiego punktu
-// 0.0f, 1.0f, 0.0f}; //wspó³rzêdne trzeciego punktu
-//float[] normalna1 = WyznaczNormalna(scianka1,0,3,6);
-//gl.glNormal3fv(normalna1,0);
-//gl.glVertex3fv(scianka1,0); //wspó³rzêdne 1-go punktu zaczynaj¹ siê od indeksu 0
-//gl.glVertex3fv(scianka1,3); //wspó³rzêdne 2-go punktu zaczynaj¹ siê od indeksu 3
-//gl.glVertex3fv(scianka1,6); //wspó³rzêdne 3-go punktu zaczynaj¹ siê od indeksu 6
-
-//scianka2
-/*float[] scianka2={-1.0f,1.0f, 0.0f,
-0.0f,0.0f, 2.0f,
-1.0f,1.0f, 0.0f};*/
-
-gl.glEnd();
- 
+ //?ciana lewa
+ gl.glNormal3f(0.0f, 0.0f, 1.0f);
+ gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(-1.0f,-1.0f,-1.0f);
+ gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(-1.0f,-1.0f,1.0f);
+ gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(-1.0f,1.0f,1.0f);
+ gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(-1.0f,1.0f,-1.0f);
+ //?ciana prawa
+ gl.glNormal3f(0.0f, 0.0f, 1.0f);
+ gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(1.0f,1.0f,-1.0f);
+ gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(1.0f,1.0f,1.0f);
+ gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(1.0f,-1.0f,1.0f);
+ gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(1.0f,-1.0f,-1.0f);
+ //?ciana dolna
+ gl.glNormal3f(0.0f, 0.0f, 1.0f);
+ gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(-1.0f,-1.0f,1.0f);
+ gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(-1.0f,-1.0f,-1.0f);
+ gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(1.0f,-1.0f,-1.0f);
+ gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(1.0f,-1.0f,1.0f);
+ //?ciana górna
+ gl.glNormal3f(0.0f, 0.0f, 1.0f);
+ gl.glTexCoord2f(0.0f, 0.0f); gl.glVertex3f(1.0f,1.0f,-1.0f);
+ gl.glTexCoord2f(1.0f, 0.0f); gl.glVertex3f(-1.0f,1.0f,-1.0f);
+ gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(-1.0f,1.0f,1.0f);
+ gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(1.0f,1.0f,1.0f);
+ gl.glEnd(); 
  
         // Flush all drawing operations to the graphics card
         gl.glFlush();
     }
-
+ 
     public void displayChanged(GLAutoDrawable drawable, boolean modeChanged, boolean deviceChanged) {
     }
 }
-
+ 
