@@ -31,7 +31,8 @@ static BufferedImage image1 = null,image2 = null, image3 = null;
 static Texture t1 = null, t2 = null , t3 = null;
 
 private static float xrot = 0.0f, yrot = 0.0f;
- 
+
+static float x = 0.f, z = 0.0f;
  
     public static void main(String[] args) {
         Frame frame = new Frame("Simple JOGL Application");
@@ -71,6 +72,11 @@ private static float xrot = 0.0f, yrot = 0.0f;
   yrot += 1.0f;
   if(e.getKeyCode() == KeyEvent.VK_LEFT)
   yrot -=1.0f;
+  if(e.getKeyCode() == KeyEvent.VK_BACK_SPACE)
+      przesun(-1.0f);
+  if(e.getKeyCode() == KeyEvent.VK_SPACE)
+      przesun(1.0f);
+  
   }
   public void keyReleased(KeyEvent e){}
   public void keyTyped(KeyEvent e){}
@@ -145,6 +151,7 @@ private static float xrot = 0.0f, yrot = 0.0f;
 gl.glColor3f(1.0f,1.0f,1.0f);
 //za³adowanie tekstury wczytanej wczeœniej z pliku krajobraz.bmp
 gl.glBindTexture(GL.GL_TEXTURE_2D, t1.getTextureObject());
+
 gl.glBegin(GL.GL_QUADS);
 //œciana przednia
 gl.glNormal3f(0.0f,0.0f,-1.0f);
@@ -198,7 +205,12 @@ gl.glTexCoord2f(1.0f, 0.0f);gl.glVertex3f(100.0f,100.0f,-100.0f);
 gl.glTexCoord2f(0.0f, 0.0f);gl.glVertex3f(100.0f,100.0f,100.0f);
 gl.glEnd();
  }
-
+ 
+     public static void przesun(float d){
+         x-=d*Math.sin(yrot*(3.14f/180.0f));
+         z+=d*Math.cos(yrot*(3.14f/180.0f));
+     }
+     
     public void display(GLAutoDrawable drawable) {
         GL gl = drawable.getGL();
  
@@ -207,9 +219,11 @@ gl.glEnd();
         // Reset the current matrix to the "identity"
         gl.glLoadIdentity();
  
-        gl.glTranslatef(0.0f, 0.0f, -6.0f); //przesuni?cie o 6 jednostek
+       // gl.glTranslatef(0.0f, 0.0f, -6.0f); //przesuni?cie o 6 jednostek
         gl.glRotatef(xrot, 1.0f, 0.0f, 0.0f); //rotacja wokó? osi X
         gl.glRotatef(yrot, 0.0f, 1.0f, 0.0f); //rotacja wokó? osi Y
+        
+        gl.glTranslatef(x, 0.0f, z);
         
         gl.glBindTexture(GL.GL_TEXTURE_2D, t2.getTextureObject());
           // Move the "drawing cursor" around
@@ -226,8 +240,8 @@ y = 2.5f*(float)Math.cos(kat); //
 gl.glVertex3f(x, y, -6.0f); //kolejne punkty
 }
 gl.glEnd(); */
- 
-        Rysuj(gl,t1,t2,t3);
+ gl.glTranslatef(0.0f, 98.0f, 0.0f);
+ Rysuj(gl,t1,t2,t3);
  
 /* gl.glBegin(GL.GL_QUADS);
  //?ciana przednia
