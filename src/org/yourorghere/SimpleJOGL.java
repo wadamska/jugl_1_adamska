@@ -27,8 +27,9 @@ import javax.swing.JOptionPane;
  * This version is equal to Brian Paul's version 1.2 1999/10/21
  */
 public class SimpleJOGL implements GLEventListener {
-static BufferedImage image1 = null,image2 = null;
-static Texture t1 = null, t2 = null;
+static BufferedImage image1 = null,image2 = null, image3 = null;
+static Texture t1 = null, t2 = null , t3 = null;
+static Scena scena;
 private static float xrot = 0.0f, yrot = 0.0f;
  
  
@@ -98,8 +99,9 @@ private static float xrot = 0.0f, yrot = 0.0f;
     
          try
  {
- image1 = ImageIO.read(getClass().getResourceAsStream("/skora1.jpg"));
- image2 = ImageIO.read(getClass().getResourceAsStream("/skora2.jpg"));
+ image1 = ImageIO.read(getClass().getResourceAsStream("/niebo.jpg"));
+ image2 = ImageIO.read(getClass().getResourceAsStream("/bok.jpg"));
+ image3 = ImageIO.read(getClass().getResourceAsStream("/trawa.jpg"));
  }
  catch(Exception exc)
  {
@@ -109,6 +111,7 @@ private static float xrot = 0.0f, yrot = 0.0f;
  
  t1 = TextureIO.newTexture(image1, false);
  t2 = TextureIO.newTexture(image2, false);
+ t3 = TextureIO.newTexture(image3, false);
  
  gl.glTexEnvi(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE_ENV_MODE, GL.GL_BLEND | GL.GL_MODULATE);
  gl.glEnable(GL.GL_TEXTURE_2D);
@@ -131,11 +134,71 @@ private static float xrot = 0.0f, yrot = 0.0f;
         gl.glViewport(0, 0, width, height);
         gl.glMatrixMode(GL.GL_PROJECTION);
         gl.glLoadIdentity();
-        glu.gluPerspective(45.0f, h, 1.0, 20.0);
+        glu.gluPerspective(300.0f, h, 1.0, 20.0);
         gl.glMatrixMode(GL.GL_MODELVIEW);
         gl.glLoadIdentity();
     }
  
+     void Rysuj(GL gl, Texture t1, Texture t2, Texture t3)
+ {
+//szescian
+gl.glColor3f(1.0f,1.0f,1.0f);
+//za³adowanie tekstury wczytanej wczeœniej z pliku krajobraz.bmp
+gl.glBindTexture(GL.GL_TEXTURE_2D, t1.getTextureObject());
+gl.glBegin(GL.GL_QUADS);
+//œciana przednia
+gl.glNormal3f(0.0f,0.0f,-1.0f);
+gl.glTexCoord2f(1.0f, 0.0f);gl.glVertex3f(-100.0f,100.0f,100.0f);
+gl.glTexCoord2f(0.0f, 0.0f);gl.glVertex3f(100.0f,100.0f,100.0f);
+gl.glTexCoord2f(0.0f, 1.0f);gl.glVertex3f(100.0f,-100.0f,100.0f);
+gl.glTexCoord2f(1.0f, 1.0f);gl.glVertex3f(-100.0f,-100.0f,100.0f);
+//œciana tylnia
+gl.glNormal3f(0.0f,0.0f,1.0f);
+gl.glTexCoord2f(1.0f, 1.0f);gl.glVertex3f(-100.0f,-100.0f,-100.0f);
+gl.glTexCoord2f(0.0f, 1.0f);gl.glVertex3f(100.0f,-100.0f,-100.0f);
+gl.glTexCoord2f(0.0f, 0.0f);gl.glVertex3f(100.0f,100.0f,-100.0f);
+gl.glTexCoord2f(1.0f, 0.0f);gl.glVertex3f(-100.0f,100.0f,-100.0f);
+//œciana lewa
+gl.glNormal3f(1.0f,0.0f,0.0f);
+gl.glTexCoord2f(0.0f, 0.0f);gl.glVertex3f(-100.0f,100.0f,-100.0f);
+gl.glTexCoord2f(1.0f, 0.0f);gl.glVertex3f(-100.0f,100.0f,100.0f);
+gl.glTexCoord2f(1.0f, 1.0f);gl.glVertex3f(-100.0f,-100.0f,100.0f);
+gl.glTexCoord2f(0.0f, 1.0f);gl.glVertex3f(-100.0f,-100.0f,-100.0f);
+//œciana prawa
+gl.glNormal3f(-1.0f,0.0f,0.0f);
+gl.glTexCoord2f(0.0f, 1.0f);gl.glVertex3f(100.0f,-100.0f,-100.0f);
+gl.glTexCoord2f(1.0f, 1.0f);gl.glVertex3f(100.0f,-100.0f,100.0f);
+gl.glTexCoord2f(1.0f, 0.0f);gl.glVertex3f(100.0f,100.0f,100.0f);
+gl.glTexCoord2f(0.0f, 0.0f);gl.glVertex3f(100.0f,100.0f,-100.0f);
+gl.glEnd();
+
+//œciana dolna
+//za³adowanie tekstury wczytanej wczeœniej z pliku niebo.bmp
+ gl.glBindTexture(GL.GL_TEXTURE_2D, t2.getTextureObject());
+ //ustawienia aby tekstura siê powiela³a
+ gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_S, GL.GL_REPEAT);
+ gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_WRAP_T, GL.GL_REPEAT);
+gl.glBegin(GL.GL_QUADS);
+gl.glNormal3f(0.0f,1.0f,0.0f);
+ //koordynaty ustawienia 16 x 16 kwadratów powielonej tekstury na œcianie dolnej
+gl.glTexCoord2f(0.0f, 0.0f);gl.glVertex3f(100.0f,-100.0f,100.0f);
+gl.glTexCoord2f(0.0f, 16.0f);gl.glVertex3f(100.0f,-100.0f,-100.0f);
+gl.glTexCoord2f(16.0f, 16.0f);gl.glVertex3f(-100.0f,-100.0f,-100.0f);
+gl.glTexCoord2f(16.0f, 0.0f);gl.glVertex3f(-100.0f,-100.0f,100.0f);
+gl.glEnd();
+
+ //œciana gorna
+//za³adowanie tekstury wczytanej wczeœniej z pliku trawa.bmp
+gl.glBindTexture(GL.GL_TEXTURE_2D, t3.getTextureObject());
+gl.glBegin(GL.GL_QUADS);
+gl.glNormal3f(0.0f,-1.0f,0.0f);
+gl.glTexCoord2f(0.0f, 1.0f);gl.glVertex3f(-100.0f,100.0f,100.0f);
+gl.glTexCoord2f(1.0f, 1.0f);gl.glVertex3f(-100.0f,100.0f,-100.0f);
+gl.glTexCoord2f(1.0f, 0.0f);gl.glVertex3f(100.0f,100.0f,-100.0f);
+gl.glTexCoord2f(0.0f, 0.0f);gl.glVertex3f(100.0f,100.0f,100.0f);
+gl.glEnd();
+ }
+
     public void display(GLAutoDrawable drawable) {
         GL gl = drawable.getGL();
  
@@ -164,7 +227,9 @@ gl.glVertex3f(x, y, -6.0f); //kolejne punkty
 }
 gl.glEnd(); */
  
- gl.glBegin(GL.GL_QUADS);
+        Rysuj(gl,t1,t2,t3);
+ 
+/* gl.glBegin(GL.GL_QUADS);
  //?ciana przednia
  gl.glNormal3f(0.0f, 0.0f, 1.0f);
  
@@ -206,7 +271,7 @@ gl.glEnd(); */
  gl.glTexCoord2f(1.0f, 1.0f); gl.glVertex3f(-1.0f,1.0f,1.0f);
  gl.glTexCoord2f(0.0f, 1.0f); gl.glVertex3f(1.0f,1.0f,1.0f);
  gl.glEnd(); 
- 
+ */
         // Flush all drawing operations to the graphics card
         gl.glFlush();
     }
